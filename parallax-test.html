@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Monsoon Post</title>
+<meta name="description" content="Dispatches, field notes and weather reports from the west coast of India. Printed whenever the rain lets up.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23e8542f'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23f3e9d7'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Archivo:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f3e9d7;
+  --paper-2: #e9dcc4;
+  --ink: #1c2b2a;
+  --ink-soft: #4a5c58;
+  --teal: #2f6f6a;
+  --teal-soft: #8fb0a3;
+  --coral: #e8542f;
+  --gold: #e0a33e;
+  --night: #0e1622;
+  --night-ink: #e9e2cf;
+  --line: rgba(28,43,42,.28);
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'Archivo', system-ui, sans-serif;
+  --mono: 'Spline Sans Mono', ui-monospace, monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--coral); color: var(--paper); }
+a { color: inherit; }
+.mono { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 36px; }
+
+/* grain, the print smell */
+.grain { position: fixed; inset: 0; z-index: 2000; pointer-events: none; opacity: .06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* loader */
+.loader { position: fixed; inset: 0; z-index: 3000; background: var(--paper);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  transition: transform .8s cubic-bezier(.76,0,.24,1); border-bottom: 3px solid var(--ink); }
+.loader .mono { color: var(--coral); }
+.loader em { font-family: var(--serif); font-size: 22px; color: var(--ink-soft); }
+.loader.gone { transform: translateY(-101%); }
+
+/* side credits */
+.side { position: fixed; top: 50%; z-index: 400; writing-mode: vertical-rl;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--ink-soft); text-decoration: none; }
+.side.left { left: 16px; transform: translateY(-50%) rotate(180deg); }
+.side.right { right: 16px; transform: translateY(-50%); }
+.side b { color: var(--coral); font-weight: 500; }
+.night .side { color: rgba(233,226,207,.55); }
+
+/* masked title rise */
+.mask { display: block; overflow: hidden; padding-bottom: .08em; }
+.mask .line { display: block; transform: translateY(115%); animation: rise 1.1s cubic-bezier(.22,1,.36,1) forwards; }
+.mask .l2 { animation-delay: .16s; }
+@keyframes rise { to { transform: translateY(0); } }
+
+/* hero */
+.hero { min-height: 100vh; min-height: 100svh; position: relative;
+  background: linear-gradient(180deg, #f6efdd 0%, #f3e3c6 52%, #eec48f 78%, #e89a63 100%);
+  display: flex; align-items: center; }
+.layer { position: absolute; left: 0; width: 100%; pointer-events: none; }
+.sun { position: absolute; right: 15%; top: 17%; width: 130px; height: 130px; border-radius: 50%;
+  background: var(--gold); box-shadow: 0 0 60px 18px rgba(224,163,62,.45); pointer-events: none; }
+.headland { bottom: 33%; }
+.water { bottom: 15%; }
+.palms { bottom: -6px; }
+.birds { top: 22%; left: 26%; width: 220px; }
+.hero .wrap { position: relative; z-index: 2; padding-top: 8vh; }
+.kicker { color: var(--ink-soft); opacity: 0; animation: fade .8s ease .1s forwards; }
+.kicker b { color: var(--coral); font-weight: 500; }
+@keyframes fade { to { opacity: 1; } }
+.hero-title { font-family: var(--serif); font-weight: 400; font-size: clamp(64px, 12.5vw, 168px);
+  line-height: .94; letter-spacing: -.01em; margin: 18px 0 10px; }
+.hero-title em { font-style: italic; color: var(--coral); }
+.hero-sub { max-width: 46ch; color: var(--ink-soft); font-size: clamp(15px, 1.6vw, 18px);
+  margin-bottom: 34px; opacity: 0; animation: fade .8s ease .55s forwards; }
+
+/* flip button */
+.flip { display: inline-block; height: 54px; perspective: 700px; text-decoration: none; }
+.flip-inner { position: absolute; inset: 0; transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.22,1,.36,1); }
+.flip:hover .flip-inner { transform: rotateX(-90deg); }
+.face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+  backface-visibility: hidden; border: 2px solid var(--ink); padding: 0 26px; white-space: nowrap; }
+.face.front { background: var(--ink); color: var(--paper); transform: rotateX(0) translateZ(27px); }
+.face.back { background: var(--coral); color: var(--ink); transform: rotateX(90deg) translateZ(27px); }
+
+/* stamp badge */
+.stamp { position: absolute; right: 7%; top: 12%; width: 110px; height: 110px; z-index: 2; pointer-events: none; }
+.stamp svg { width: 100%; height: 100%; animation: spin 16s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ticker */
+.ticker { position: relative; z-index: 5; background: var(--ink); color: var(--paper);
+  border-top: 3px solid var(--ink); border-bottom: 3px solid var(--ink);
+  overflow: hidden; padding: 13px 0; white-space: nowrap; }
+.ticker-track { display: inline-flex; animation: scroll 24s linear infinite; }
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.ticker-track span { font-family: var(--sans); font-weight: 600; font-size: 14px;
+  letter-spacing: .16em; text-transform: uppercase; padding-right: 18px; }
+.ticker-track i { color: var(--coral); font-style: normal; }
+@keyframes scroll { to { transform: translateX(-50%); } }
+
+/* sections */
+section { position: relative; z-index: 5; background: var(--paper); padding: 120px 0; }
+.bignum { position: absolute; right: 2vw; top: 40px; z-index: 0; font-family: var(--sans);
+  font-weight: 700; font-size: clamp(150px, 24vw, 320px); line-height: 1;
+  color: transparent; -webkit-text-stroke: 2px var(--line); pointer-events: none; user-select: none; }
+@supports not (-webkit-text-stroke: 1px #000) { .bignum { color: var(--paper-2); } }
+.sec-head { display: flex; align-items: baseline; gap: 18px; margin-bottom: 20px; position: relative; z-index: 1; }
+.sec-head .rule { flex: 1; border-top: 2px solid var(--ink); transform: translateY(-6px); }
+.sec-title { font-family: var(--serif); font-style: italic; font-weight: 400;
+  font-size: clamp(34px, 5vw, 58px); letter-spacing: -.01em; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; position: relative; z-index: 1; }
+.cols .lede { font-family: var(--serif); font-size: clamp(21px, 2.4vw, 27px); line-height: 1.45; }
+.cols .lede i { color: var(--coral); }
+.cols p + p { margin-top: 16px; }
+.cols .body { color: var(--ink-soft); }
+.aside-note { margin-top: 34px; color: var(--ink-soft); display: flex; gap: 26px; flex-wrap: wrap; }
+.aside-note span b { color: var(--coral); font-weight: 500; }
+
+/* underline links */
+.tlink { position: relative; text-decoration: none; font-weight: 600; }
+.tlink::after { content: ''; position: absolute; left: 0; bottom: -4px; width: 100%; height: 2px;
+  background: var(--coral); transform: scaleX(0); transform-origin: left;
+  transition: transform .35s cubic-bezier(.22,1,.36,1); }
+.tlink:hover::after { transform: scaleX(1); }
+
+/* night section */
+.night { background: var(--night); color: var(--night-ink); overflow: hidden; padding: 150px 0; }
+.night .sec-head .rule { border-color: rgba(233,226,207,.4); }
+.night .cols .body { color: rgba(233,226,207,.72); }
+#stars { position: absolute; inset: 0; pointer-events: none; }
+#stars span { position: absolute; background: var(--night-ink); border-radius: 50%;
+  opacity: .15; animation: tw 4.5s ease-in-out infinite; }
+@keyframes tw { 50% { opacity: .95; } }
+.cloud { position: absolute; width: 380px; height: 100px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(233,226,207,.13), transparent 70%);
+  filter: blur(4px); pointer-events: none; }
+.cloud.c1 { top: 16%; left: 6%; }
+.cloud.c2 { top: 30%; right: 4%; width: 300px; }
+.giant { text-align: center; margin: 90px 0 70px; font-family: var(--sans); font-weight: 700;
+  font-size: clamp(84px, 19vw, 280px); line-height: 1; letter-spacing: -.02em; text-transform: uppercase;
+  color: transparent; -webkit-text-stroke: 2px rgba(233,226,207,.5); user-select: none; }
+@supports not (-webkit-text-stroke: 1px #000) { .giant { color: rgba(233,226,207,.25); } }
+.lighthouse { position: absolute; right: 6%; bottom: 0; width: 64px; pointer-events: none; }
+.lighthouse .beam { position: absolute; left: 29px; top: -34px; width: 42vw; height: 110px;
+  transform-origin: left center; clip-path: polygon(0 46%, 100% 0, 100% 100%, 0 54%);
+  background: linear-gradient(90deg, rgba(240,214,150,.4), transparent 85%);
+  animation: sweep 9s ease-in-out infinite alternate; }
+@keyframes sweep { from { transform: rotate(-16deg); } to { transform: rotate(14deg); } }
+
+/* log entries */
+.entry { display: grid; grid-template-columns: 150px 1fr; gap: 30px;
+  padding: 34px 0; border-bottom: 2px solid var(--line); position: relative; z-index: 1; }
+.entry:last-child { border-bottom: none; }
+.entry .date { font-family: var(--mono); font-size: 12px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--coral); padding-top: 6px; }
+.entry h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(22px, 2.6vw, 30px); margin-bottom: 6px; }
+.entry p { color: var(--ink-soft); max-width: 62ch; }
+
+/* footer */
+footer { position: relative; z-index: 5; background: var(--paper-2);
+  border-top: 3px solid var(--ink); padding: 110px 0 46px; }
+.giant-cta { display: inline-block; font-family: var(--sans); font-weight: 700;
+  font-size: clamp(52px, 11vw, 150px); line-height: .95; letter-spacing: -.03em;
+  text-transform: uppercase; text-decoration: none; transition: color .2s ease; }
+.giant-cta:hover { color: var(--coral); }
+.giant-cta .arr { display: inline-block; transition: transform .25s ease; }
+.giant-cta:hover .arr { transform: translate(12px,-12px); }
+.foot-grid { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  border-top: 2px solid var(--line); margin-top: 70px; padding-top: 22px; color: var(--ink-soft); }
+.foot-grid a { text-decoration: none; }
+.foot-grid a:hover { color: var(--coral); }
+.joke { text-align: center; margin-top: 44px; padding-top: 18px;
+  border-top: 2px dashed var(--line); color: var(--ink-soft); font-size: 11px; }
+
+/* reveal */
+.reveal { opacity: 0; transform: translateY(26px);
+  transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* modal */
+.modal { position: fixed; inset: 0; z-index: 2500; display: none;
+  align-items: center; justify-content: center; padding: 24px; }
+.modal.open { display: flex; }
+.modal-bg { position: absolute; inset: 0; background: rgba(28,43,42,.6); }
+.modal-card { position: relative; background: var(--paper); border: 3px solid var(--ink);
+  box-shadow: 10px 10px 0 var(--ink); max-width: 430px; padding: 34px 34px 28px;
+  transform: translateY(16px) scale(.97); opacity: 0;
+  transition: transform .4s cubic-bezier(.22,1,.36,1), opacity .3s ease; }
+.modal.open .modal-card { transform: none; opacity: 1; }
+.modal-card h3 { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 30px; margin-bottom: 10px; }
+.modal-card p { color: var(--ink-soft); font-size: 15px; }
+.modal-x { position: absolute; top: 10px; right: 14px; background: none; border: none;
+  font-size: 26px; cursor: pointer; color: var(--ink); line-height: 1; }
+.modal-x:hover { color: var(--coral); }
+
+/* responsive */
+@media (max-width: 900px) {
+  .side { display: none; }
+  .cols { grid-template-columns: 1fr; gap: 28px; }
+  .entry { grid-template-columns: 1fr; gap: 8px; }
+  .stamp { width: 84px; height: 84px; right: 4%; top: 9%; }
+  .sun { width: 90px; height: 90px; }
+  .lighthouse { width: 44px; right: 3%; }
+  section { padding: 90px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; }
+  .ticker-track { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<div class="loader" id="loader">
+  <span class="mono">the monsoon post · vol. 07</span>
+  <em>ink drying…</em>
+</div>
+
+<a class="side left" href="#top">*type <b>instrument serif</b></a>
+<a class="side right" href="#top">*sky <b>hand-mixed css</b></a>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" id="hero" style="padding:0;">
+    <div class="sun" data-parallax-page="0.28" data-parallax-scale="1:1.35" aria-hidden="true"></div>
+
+    <svg class="layer headland" data-parallax-page="0.5" viewBox="0 0 1440 170" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,170 L0,96 Q140,44 300,78 T620,70 T940,92 T1240,52 L1440,84 L1440,170 Z" fill="#8fb0a3"/>
+      <path d="M0,170 L0,128 Q220,86 430,112 T860,108 T1290,124 L1440,112 L1440,170 Z" fill="#6d9689" opacity=".55"/>
+    </svg>
+
+    <svg class="layer water" data-parallax-page="0.3" viewBox="0 0 1440 240" preserveAspectRatio="none" aria-hidden="true">
+      <rect width="1440" height="240" fill="#2f6f6a"/>
+      <path d="M0,60 Q90,52 180,60 T360,60 T540,60 T720,60 T900,60 T1080,60 T1260,60 T1440,60" fill="none" stroke="#4d8d84" stroke-width="4"/>
+      <path d="M0,120 Q120,110 240,120 T480,120 T720,120 T960,120 T1200,120 T1440,120" fill="none" stroke="#4d8d84" stroke-width="4" opacity=".7"/>
+      <path d="M0,185 Q100,176 200,185 T400,185 T600,185 T800,185 T1000,185 T1200,185 T1400,185" fill="none" stroke="#255952" stroke-width="5" opacity=".6"/>
+      <g transform="translate(950,96)">
+        <path d="M0,0 L52,0 L42,15 L10,15 Z" fill="#12211f"/>
+        <path d="M25,0 L25,-38 L50,-8 L25,-8 Z" fill="#f3e9d7"/>
+        <path d="M22,0 L22,-30 L2,-6 L22,-6 Z" fill="#e9dcc4"/>
+      </g>
+    </svg>
+
+    <svg class="layer birds" data-parallax-page="0.2" data-parallax-x="50:-50" viewBox="0 0 220 60" aria-hidden="true">
+      <g fill="none" stroke="#1c2b2a" stroke-width="4" stroke-linecap="round">
+        <path d="M10,30 Q20,18 30,30 Q40,18 50,30"/>
+        <path d="M90,14 Q98,4 106,14 Q114,4 122,14"/>
+        <path d="M150,40 Q158,30 166,40 Q174,30 182,40"/>
+      </g>
+    </svg>
+
+    <svg class="layer palms" data-parallax-page="0.12" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <g id="palm" stroke="#1c2b2a" fill="none" stroke-linecap="round">
+          <path d="M46,290 C40,200 44,120 52,52" stroke-width="14"/>
+          <path d="M52,52 C28,26 2,22 -18,36" stroke-width="9"/>
+          <path d="M52,52 C70,18 98,14 114,28" stroke-width="9"/>
+          <path d="M52,52 C34,14 18,-4 -2,-10" stroke-width="9"/>
+          <path d="M52,52 C76,22 96,4 90,-18" stroke-width="9"/>
+          <path d="M52,52 C48,20 58,-6 76,-18" stroke-width="9"/>
+          <path d="M52,52 C26,36 6,44 -12,62" stroke-width="9"/>
+          <circle cx="44" cy="62" r="7" fill="#1c2b2a" stroke="none"/>
+          <circle cx="60" cy="66" r="7" fill="#1c2b2a" stroke="none"/>
+        </g>
+      </defs>
+      <use href="#palm" transform="translate(-16,10)"/>
+      <use href="#palm" transform="translate(1290,26) scale(-1,1)"/>
+    </svg>
+
+    <div class="stamp" data-parallax-page="0.22" data-parallax-rotate="-10:10" aria-hidden="true">
+      <svg viewBox="0 0 100 100">
+        <defs><path id="stampPath" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"/></defs>
+        <circle cx="50" cy="50" r="48" fill="#e8542f"/>
+        <text style="font-family: ui-monospace, monospace; font-size: 10.5px; font-weight: 700; letter-spacing: 2.6px; fill: #f3e9d7;">
+          <textPath href="#stampPath">RAIN OR SHINE ✦ FRESH OFF THE PRESS ✦</textPath>
+        </text>
+        <text x="50" y="57" text-anchor="middle" style="font-size: 22px; fill: #f3e9d7;">☂</text>
+      </svg>
+    </div>
+
+    <div class="wrap">
+      <p class="kicker mono">Vol. 07 <b>·</b> Monsoon 2026 <b>·</b> Goa, west coast</p>
+      <h1 class="hero-title">
+        <span class="mask"><span class="line l1">The Monsoon</span></span>
+        <span class="mask"><span class="line l2"><em>Post.</em></span></span>
+      </h1>
+      <p class="hero-sub">Dispatches, field notes and weather reports from the west coast of India. Printed whenever the rain lets up.</p>
+      <span class="flip">
+        <span class="flip-inner">
+          <span class="face front">Read the dispatch ↓</span>
+          <span class="face back">no ads, promise</span>
+        </span>
+      </span>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>Field notes <i>✦</i> Weather <i>✦</i> Boat watching <i>✦</i> Chai reviews <i>✦</i> Tide tables <i>✦</i> Rain counts <i>✦</i> Fish market speed runs <i>✦</i>&nbsp;</span>
+      <span>Field notes <i>✦</i> Weather <i>✦</i> Boat watching <i>✦</i> Chai reviews <i>✦</i> Tide tables <i>✦</i> Rain counts <i>✦</i> Fish market speed runs <i>✦</i>&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- 01 DISPATCH -->
+  <section id="dispatch">
+    <span class="bignum" data-parallax="60:-60" aria-hidden="true">01</span>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2 class="sec-title">The Dispatch</h2>
+        <span class="rule"></span>
+      </div>
+      <div class="cols">
+        <p class="lede reveal">Every monsoon, the west coast folds in on itself. The boats come home by four. The chai gets stronger, the rain gets <i>personal</i>, and everyone suddenly has opinions about the sea.</p>
+        <div class="body reveal">
+          <p>This is a paper for those weeks. Field notes from Panjim to Canacona. Tide tables argued over like family property. A boat-watching column that takes itself far too seriously.</p>
+          <p>We print when the rain lets up, which lately means Tuesdays, sometimes never. The editor is one person, one umbrella, and a second-hand printer that sounds like a startled cat.</p>
+          <p class="aside-note mono">
+            <span>No. <b>07</b></span>
+            <span>price: <b>one dry umbrella</b></span>
+            <span>returns: <b>not accepted</b></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 NIGHT WATCH -->
+  <section class="night" id="nightwatch">
+    <div id="stars" aria-hidden="true"></div>
+    <div class="cloud c1" data-parallax-x="90:-90" aria-hidden="true"></div>
+    <div class="cloud c2" data-parallax-x="-70:70" aria-hidden="true"></div>
+    <div class="lighthouse" data-parallax-page="0.15" aria-hidden="true">
+      <div class="beam"></div>
+      <svg viewBox="0 0 64 220">
+        <path d="M24,220 L28,62 L36,62 L40,220 Z" fill="#e9e2cf"/>
+        <path d="M26.6,178 L37.4,178 L36.6,160 L27.4,160 Z" fill="#0e1622"/>
+        <path d="M27.2,136 L36.8,136 L36,120 L28,120 Z" fill="#0e1622"/>
+        <rect x="25" y="48" width="14" height="14" fill="#e9e2cf"/>
+        <path d="M22,48 L32,36 L42,48 Z" fill="#e9e2cf"/>
+      </svg>
+    </div>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2 class="sec-title">The lighthouse file</h2>
+        <span class="rule"></span>
+      </div>
+      <div class="cols">
+        <p class="lede reveal">From June to September, the Aguada light sweeps the Arabian Sea every few seconds, and has done so since <i>1864</i>.</p>
+        <div class="body reveal">
+          <p>It has seen cyclones, cargo ships, three proper shipwrecks and one very confused cow that wandered onto the ramp in 1997. The cow is fine. The ramp has opinions now.</p>
+          <p>We keep a chair on the balcony and a log of every sweep. The log is mostly empty. The chair is mostly occupied. On clear nights you can hear the generator humming like it knows something.</p>
+        </div>
+      </div>
+    </div>
+    <div class="giant" data-parallax-scale="0.75:1.3" data-parallax="60:-60" aria-hidden="true">Monsoon</div>
+  </section>
+
+  <!-- 03 THE LOG -->
+  <section id="log">
+    <span class="bignum" data-parallax="60:-60" aria-hidden="true">03</span>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2 class="sec-title">The Log</h2>
+        <span class="rule"></span>
+      </div>
+      <div class="entry reveal">
+        <div class="date">12 June</div>
+        <div>
+          <h3>First rain</h3>
+          <p>The fish market empties in ninety seconds flat. A new record. One man stayed behind to finish his chai, which the log officially recognises as an act of courage.</p>
+        </div>
+      </div>
+      <div class="entry reveal">
+        <div class="date">29 June</div>
+        <div>
+          <h3>Spotter report</h3>
+          <p>Three dolphins inside the bay, doing laps like they pay rent. The spotter refused to come in for dinner. The dolphins also refused. A standoff, then.</p>
+        </div>
+      </div>
+      <div class="entry reveal">
+        <div class="date">17 July</div>
+        <div>
+          <h3>Power cut, four hours</h3>
+          <p>The whole neighbourhood became candle experts overnight. Someone played the guitar. We forgive the guitar. Barely.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="write">
+    <div class="wrap">
+      <p class="mono reveal" style="color: var(--ink-soft); margin-bottom: 18px;">Got a field note of your own?</p>
+      <a class="giant-cta reveal" href="mailto:hello@monsoonpost.example">Write back <span class="arr">↗</span></a>
+      <div class="foot-grid mono">
+        <span><a class="tlink" href="#dispatch">Back to the dispatch ↑</a></span>
+        <span>printed on <b style="color: var(--coral);">100% recycled pixels</b></span>
+        <span>© Monsoon 2026, the west coast</span>
+      </div>
+      <p class="joke mono">hand-mixed inks · zero frameworks consulted · the cow is still fine</p>
+    </div>
+  </footer>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="modal-bg" id="modal-bg"></div>
+  <div class="modal-card">
+    <button class="modal-x" id="modal-x" aria-label="Close">×</button>
+    <h3>Thanks for reading.</h3>
+    <p>This is a parallax study: scrubbed layers, lerp glide, masked type, one lighthouse. The engine is 60 lines of vanilla JS and it sleeps when the page is still. No frameworks were consulted, and none were harmed.</p>
+  </div>
+</div>
+
+<script>
+// ---------- Parallax engine: scrubbed + lerp glide, sleeps when settled ----------
+(function () {
+  var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (rm) return; // static composition is still valid, just frozen
+  var LERP = 0.09;
+  var els = document.querySelectorAll('[data-parallax-page],[data-parallax],[data-parallax-x],[data-parallax-scale],[data-parallax-rotate]');
+  if (!els.length) return;
+
+  function rng(a) { var p = (a || '0:0').split(':'); return { a: parseFloat(p[0]) || 0, b: parseFloat(p[1]) || 0 }; }
+  var items = [];
+
+  function measure() {
+    items = [];
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      el.style.transform = '';
+      var r = el.getBoundingClientRect();
+      items.push({
+        el: el,
+        page: parseFloat(el.getAttribute('data-parallax-page')) || 0,
+        y: rng(el.getAttribute('data-parallax')),
+        x: rng(el.getAttribute('data-parallax-x')),
+        s: el.hasAttribute('data-parallax-scale') ? rng(el.getAttribute('data-parallax-scale')) : null,
+        r: el.hasAttribute('data-parallax-rotate') ? rng(el.getAttribute('data-parallax-rotate')) : null,
+        top: r.top + window.scrollY, h: r.height || 1,
+        cy: 0, cx: 0, cs: 1, cr: 0
+      });
+    }
+  }
+
+  function target(it) {
+    var vh = window.innerHeight, sy = window.scrollY;
+    var prog = (sy + vh - it.top) / (vh + it.h);
+    prog = prog < 0 ? 0 : prog > 1 ? 1 : prog;
+    return {
+      y: sy * it.page + it.y.a + (it.y.b - it.y.a) * prog,
+      x: it.x.a + (it.x.b - it.x.a) * prog,
+      s: it.s ? it.s.a + (it.s.b - it.s.a) * prog : 1,
+      r: it.r ? it.r.a + (it.r.b - it.r.a) * prog : 0
+    };
+  }
+
+  var running = false;
+  function frame() {
+    var alive = false;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i], t = target(it);
+      it.cy += (t.y - it.cy) * LERP;
+      it.cx += (t.x - it.cx) * LERP;
+      it.cs += (t.s - it.cs) * LERP;
+      it.cr += (t.r - it.cr) * LERP;
+      if (Math.abs(t.y - it.cy) > .05 || Math.abs(t.x - it.cx) > .05 ||
+          Math.abs(t.s - it.cs) > .001 || Math.abs(t.r - it.cr) > .05) alive = true;
+      it.el.style.transform = 'translate3d(' + it.cx.toFixed(2) + 'px,' + it.cy.toFixed(2) + 'px,0)' +
+        (it.r ? ' rotate(' + it.cr.toFixed(2) + 'deg)' : '') +
+        (it.s ? ' scale(' + it.cs.toFixed(4) + ')' : '');
+    }
+    if (alive) requestAnimationFrame(frame); else running = false;
+  }
+  function kick() { if (!running) { running = true; requestAnimationFrame(frame); } }
+
+  window.addEventListener('scroll', kick, { passive: true });
+  window.addEventListener('resize', function () { measure(); kick(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measure(); kick(); });
+  measure(); kick();
+})();
+
+// ---------- Loader ----------
+function liftLoader() {
+  var l = document.getElementById('loader');
+  if (!l) return;
+  l.classList.add('gone');
+  setTimeout(function () { if (l.parentNode) l.parentNode.removeChild(l); }, 900);
+}
+window.addEventListener('load', function () { setTimeout(liftLoader, 500); });
+setTimeout(liftLoader, 2600); // failsafe
+
+// ---------- Stars ----------
+(function () {
+  var box = document.getElementById('stars');
+  if (!box) return;
+  for (var i = 0; i < 52; i++) {
+    var s = document.createElement('span');
+    s.style.left = (Math.random() * 100).toFixed(2) + '%';
+    s.style.top = (Math.random() * 64).toFixed(2) + '%';
+    var z = (Math.random() * 2 + 1).toFixed(1);
+    s.style.width = z + 'px'; s.style.height = z + 'px';
+    s.style.animationDelay = (Math.random() * 4).toFixed(2) + 's';
+    box.appendChild(s);
+  }
+})();
+
+// ---------- Reveal ----------
+(function () {
+  var revs = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: .12 });
+    revs.forEach(function (el) { io.observe(el); });
+  } else {
+    revs.forEach(function (el) { el.classList.add('in'); });
+  }
+})();
+
+// ---------- Modal ----------
+(function () {
+  var modal = document.getElementById('modal');
+  if (!modal) return;
+  setTimeout(function () { modal.classList.add('open'); }, 6000);
+  function close() { modal.classList.remove('open'); }
+  document.getElementById('modal-x').addEventListener('click', close);
+  document.getElementById('modal-bg').addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>
